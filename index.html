@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Pause - a goal tracker that starts with a breath</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink:#0f2623;
+            --ink-soft:#173733;
+            --paper:#F4EFE4;
+            --paper-dim:#E7E0D0;
+            --moss:#7C9A82;
+            --amber:#D2A24C;
+            --slate:#5C7370;
+            --line: rgba(244,239,228,0.14);
+        }
+        *{box-sizing:border-box;}
+        html{scroll-behavior:smooth;}
+        body{
+            margin: 0;
+            background: var(--ink);
+            color: var(--paper);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *{animation-duration:0.01ms 1!important; animation-iteration-count:1!important; transition-duration:0.01ms!important;}
+        }
+
+        a{color:inherit;}
+        .wrap{max-width:920px; margin:0 auto; padding:0 28px;}
+
+        nav{
+            display:flex; 
+            align-items:center;
+            justify-content:space-between;
+            padding:26px 0;
+        }
+        .wordmark{
+            font-family:'Fraunces', serif;
+            font-weight: 500;
+            font-size:1.15rem;
+            letter-spacing:0.01em;
+        }
+        .wordmark span{color:var(--moss);}
+        nav .status{
+            font-family:'IBM Plex Mono', monospace;
+            font-size:0.7rem;
+            letter-spacing:0.06em; 
+            text-transform:uppercase;
+            color:var(--moss);
+            border:1px solid var(--line);
+            padding:6px 12px;
+            border-radius:100px;
+        }
+
+        .hero{
+            padding:64px 0 40px;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 40px;
+            align-items:center;
+        }
+        .hero h1{
+            font-family:'Fraunces', serif;
+            font-weight: 500;
+            font-size:clamp(2.4rem, 5vw, 3.4rem);
+            line-height:1.08;
+            margin:0 0 20px;
+            letter-spacing:-0.01em;
+        }
+        hero h1 em{
+            font-style:italic;
+            color:var(--moss);
+            font-weight:400;
+        }
+        .hero p.lede{
+            font-size:1.05rem;
+            line-height:1.6;
+            color:var(--paper-dim);
+            max-width:46h;
+            margin:0 0 28px;
+        }
+        .cta-row{
+            display:flex;
+            gap:14px;
+            flex-wrap:wrap;
+        }
+        .btn{
+            font-family:'inter', sans-serif;
+            font-weight:600;
+            font-size:0.92rem;
+            padding: 13px 22px;
+            border-radius:8px;
+            border:1px solid transparent;
+            cursor:pointer;
+            text-decoration:none;
+            display:inline-block;
+        }
+        .btn-primary{
+            background:var(--amber);
+            color:var(--ink);
+        }
+        .btn-ghost{
+            border-color:var(--line);
+            color:var(--paper);
+        }
+
+        .breath-stage{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            position:relative;
+            height:280px;
+        }
+        .breath-ring{
+            width:130px;
+            height:130px;
+            border-radius:50%;
+            border:1.5px solid var(--moss);
+            position:absolute;
+            animation: breathe 12s ease-in-out infinite;
+        }
+        .breath-ring.r2{
+            border-color:rgba(124, 154, 130, 0.5); 
+            animation-delay: -0.3s;
+        }
+        .breath-ring.r3{
+            border-color:rgba(124, 154, 130, 0.28);
+            animation-delay: -0.6s;
+        }
+        .breath-core{
+            width: 80px;
+            height: 80px;
+            border-radius:50%;
+            background: radial-gradient(circle at 35% 30%, #9FB89F, var(--moss) 70%);
+            position: relative;
+            z-index: 2;
+            animation: breathe 12s ease-in-out infinite;
+            box-shadow: 0 0 40px rgba(124, 154, 130, 0.35);
+        }
+        @keyframes breathe{
+            0%{ transform:scale(0.72);}
+            33%{ transform:scale(1.15);}
+            50%{ transform:scale(1.15);}
+            83%{ transform:scale(0.72);}
+            100%{ transform:scale(0.72);}
+        }
+        .breath-label{
+            position:absolute;
+            bottom:0;
+            left:50%;
+            transform:translateX(-50%);
+            font-family:'IBM Plex Mono', monospace;
+            font-size:0.72rem;
+            letter-spacing:0.1em;
+            text-transform:uppercase;
+            color:var(--slate);
+        }
+
+        section{
+            padding:56px 0;
+            border-top:1px solid var(--line);
+        }
+        .eyebrow{
+            font-family:'IBM Plex Mono', monospace;
+            font-size:0.72em;
+            letter-spacing:0.12em;
+            text-transform:uppercase;
+            color:var(--moss);
+            margin: 0 0 14px;
+        }
+        h2{
+            font-family:'Fraunces', serif;
+            font-weight: 500;
+            font-size:clamp(1.9rem, 4vw, 2.4rem);
+            line-height:1.08;
+            margin:0 0 18px;
+            letter-spacing:-0.01em;
+        }
+        .what-grid{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:24px;
+            margin-top:28px;
+        }
+        .what-card{
+            background:var(--ink-soft);
+            border:1px solid var(--line);
+            border-radius:12px;
+            padding:22px;
+        }
+        .what-card .mark{
+            font-family:'Fraunces', serif;
+            font-style:italic;
+            font-size:1.4rem;
+            color:var(--amber);
+            margin-bottom:10px;
+        }
+        .what-card h3{
+            font-size:1rem;
+            margin:0 0 8px;
+            font-weight:600;    
+        }
+        .what-card p{
+            font-size:0.9rem;
+            line-height:1.55;
+            margin:0;
+            color:var(--paper-dim);
+        }
+
+        .steps{
+            margin-top:28px;
+            display:flex;
+            flex-direction:column;
+        }
+        .step{
+            display:grid;
+            grid-template-columns:56px 1fr;
+            gap:20px;
+            padding:22px 0;
+            border-bottom:1px solid var(--line);
+        }
+        .step:last-child{border-bottom:none;}
+        .step .step-num{
+            font-family:'Fraunces', serif;
+            font-size:1.8rem;
+            color:var(--slate);
+            font-weight:400;
+        }
+        .step h3{
+            margin:0 0 6px;
+            font-size:1.05rem;
+            font-weight:600;
+        }
+        .step p{
+            margin:0; 
+            color:var(--paper-dim); 
+            font-size:0.92rem;
+            line-height:1.6;
+            max-width:56ch;
+        }
+
+        .status-card{
+            margin-top:26px;
+            background:var(--ink-soft);
+            border:1px solid var(--line);
+            border-radius:12px;
+            padding:26px 28px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:20px;
+            flex-wrap:wrap;
+        }
+        .status-card .dot{
+            width:9px;
+            height:9px;
+            border-radius:50%;
+            background:var(--amber);
+            display:inline-block;
+            margin-right:10px;
+            animation: pulse 2.4s ease-in-out infinite;
+        }
+        @keyframes pulse{
+            0%,100%{opacity:1;}
+            50%{opacity:0.35;}
+        }
+        .status-card p{
+            margin:0;
+            font-size:0.92rem;
+            color:var(--paper-dim);
+        }
+        .status-card .tag{
+            font-family:'IBM Plex Mono', monospace;
+            font: size 0.85rem;
+            color:var(--paper);
+        }
+
+        footer{
+            padding: 36px 0 48px;
+            border-top:1px solid var(--line);
+            display: flex;
+            justify-content:space-between;
+            align-items:center;
+            flex-wrap: wrap;
+            gap:12px;
+        }
+        footer p{
+            margin:0;
+            font-size:0.8rem;
+            color:var(--slate);
+            font-family:'IBM Plex Mono', monospace;
+        }
+
+        @media (max-width: 760px){
+            .hero{grid-template-columns: 1fr; gap:12px;}
+            .breath-stage{height:200px; order:-1;}
+            .what-grid{grid-template-columns:1fr;}
+            .step{grid-template-columns: 40px 1fr;}
+        }
+
+        :focus-visible{outline:2px solid var(--amber); outline-offset:3px;}
+    </style>
+</head>
+<body>
+
+    <div class="wrap">
+        <nav>
+            <div class="wordmark">Pause<span>.</span></div>
+            <div class="status">In development</div>
+        </nav>
+
+        <div class="hero">
+            <div>
+                <h1>Before the goal,<br><em>a breath.</em></h1>
+                <p class="lede">Pause is a goal-tracking app built around one idea: you check in on your goals the same way you check in on yourself - slowly, on purpose, without the noise of a feed. </p>
+                <div class="cta-row">
+                    <a class="btn btn-primary" href="#how">See how it works</a>
+                    <a class="btn btn-ghost" href="#status">Development status</a>
+                </div>
+            </div>
+            <div class="breath-stage" aria-hidden="true">
+                <div class="breath-ring r3"></div>
+                <div class="breath-ring r2"></div>
+                <div class="breath-ring"></div>
+                <div class="breath-core"></div>
+                <div class="breath-label">in - hold - out</div>
+            </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="wrap">
+            <p class="eybrow">What it does</p>
+            <h2>Three habits, one screen.</h2>
+            <div class="what-grid">
+                <div class="what-card">
+                    <div class="mark">01</div>
+                    <h3>Set a goal that means something</h3>
+                    <p>No template, no streak pressure by default - just what you're actually working toward, in your own words.</p>                  
+                </div>
+                <div class="what-card">
+                    <div class="mark">02</div>
+                    <h3>Check in, breifly</h3>
+                    <p>A short daily or weekly pause to log progress. It's designed to take under a minute, not become another feed to scroll.</p>
+                </div>
+                <div class="what-card">
+                    <div class="mark">03</div>
+                    <h3>Watch the shape of your progress</h3>
+                    <p>Your history builds into a quiet, honest picture - not a leaderboard, just a record for you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how">
+        <div class="wrap">
+            <p class="eyebrow">How it works</p>
+            <h2>The loop</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="num">1</div>
+                    <div>
+                        <h3>Creat a goal</h3>
+                        <p>Give it a name, a reason and however much structure you want around it. Pause doesn't force a format on you.</p>                        
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="num">2</div>
+                    <div>
+                        <h3>Get a gentle nudge</h3>
+                        <p>A check-in reminder arrives when it's thime - not a notification storm, just a tap to open the app and reflect.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="num">3</div>
+                    <div>
+                        <h3>Log it, honestly</h3>
+                        <p>Mark how it went. Progress, a setback, or nothing at all - the app tracks the truth, not a highlight reel.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="num">4</div>
+                    <div>
+                        <h3>Look back</h3>
+                        <p>Over weeks and months, your check-ins become a timeline you can actually learn from.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="status">
+        <div class="wrap">
+            <p class="eyebrow">Right now</p>
+            <h2>Where the build stands</h2>
+            <div class="status-card">
+                <p><span class="dot"></span>Pause started as a web app and is currently being rebuilt as a <span class="tag">native Andriod app</span>, with a Room database handling the data layer across several screens.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+        <footer>
+            <p>PAUSE - A GOAL TRACKER, NOT A TREADMILL</p>
+        </footer>
+    </div>
+</body>
+</html>
